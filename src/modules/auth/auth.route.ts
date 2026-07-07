@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
 import validateRequest from '../../middlewares/validateRequest';
-// import auth from "../../middlewares/auth.middleware";
+import auth from '../../middlewares/auth.middleware';
 
 import { AuthController } from './auth.controller';
 import { AuthValidation } from './auth.validation';
@@ -21,14 +21,7 @@ router.post(
 /**
  * Get Logged-in User Profile
  * GET /api/v1/auth/profile
- *
- * TODO:
- * Enable auth middleware after it is implemented.
  */
-router.get(
-  '/profile',
-  // auth(),
-  AuthController.getProfile,
-);
+router.get('/profile', auth(), AuthController.getProfile);
 
 export default router;

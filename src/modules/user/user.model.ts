@@ -57,14 +57,12 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
 /**
  * Hash password before saving
  */
-userSchema.pre('save', async function (next) {
+userSchema.pre('save', async function () {
   if (!this.isModified('password')) {
-    return next();
+    return;
   }
 
   this.password = await bcrypt.hash(this.password, env.BCRYPT_SALT_ROUNDS);
-
-  next();
 });
 
 /**
@@ -72,8 +70,6 @@ userSchema.pre('save', async function (next) {
  */
 userSchema.post('save', function (doc: IUserDocument, next) {
   doc.password = '';
-
-  next();
 });
 
 /**
@@ -88,9 +84,7 @@ userSchema.methods.comparePassword = async function (
 /**
  * Find user by email
  */
-userSchema.statics.isUserExistsByEmail = async function (
-  email: string,
-): Promise<IUserDocument | null> {
+userSchema.statics.isUserExistsByEmail = async function (email: string) {
   return this.findOne({
     email,
     isDeleted: false,
