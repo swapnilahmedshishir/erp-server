@@ -12,13 +12,10 @@ const validateRequest = (schema: ValidationSchema): RequestHandler => {
         query: req.query,
       });
 
-      // body overwrite করা যাবে
       req.body = parsed.body;
 
-      // params overwrite করা যাবে
       Object.assign(req.params, parsed.params);
 
-      // query overwrite করা যাবে না
       Object.assign(req.query, parsed.query);
 
       next();

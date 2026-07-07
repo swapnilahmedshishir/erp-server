@@ -7,16 +7,4 @@ cloudinary.config({
   api_secret: env.CLOUDINARY.API_SECRET,
 });
 
-(async () => {
-  try {
-    const result = await cloudinary.api.ping();
-
-    console.log('PING OK');
-    console.log(result);
-  } catch (err) {
-    console.error('PING ERROR');
-    console.error(err);
-  }
-})();
-
 export default cloudinary;
