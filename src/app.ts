@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import notFound from './middlewares/notFound';
 import globalErrorHandler from './middlewares/globalErrorHandler';
+import router from './routes';
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.get('/', (req: Request, res: Response) => {
     message: 'Server is running perfectly!',
   });
 });
+app.use('/api/v1', router);
 
 app.use(notFound);
 
