@@ -9,6 +9,8 @@ import { HTTP_STATUS } from '../constants/http';
 import { MESSAGE } from '../constants/message';
 
 const globalErrorHandler: ErrorRequestHandler = (error, _req, res, _next) => {
+  console.log('========== SERVER ERROR ==========');
+  console.error(error);
   let statusCode: number = HTTP_STATUS.INTERNAL_SERVER_ERROR;
   let message: string = MESSAGE.COMMON.INTERNAL_SERVER_ERROR;
   let errorDetails: unknown = null;

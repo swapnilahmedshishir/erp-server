@@ -6,11 +6,20 @@ type ValidationSchema = AnyZodObject | ZodEffects<AnyZodObject>;
 const validateRequest = (schema: ValidationSchema): RequestHandler => {
   return async (req: Request, _res: Response, next: NextFunction) => {
     try {
-      await schema.parseAsync({
+      const parsed = await schema.parseAsync({
         body: req.body,
         params: req.params,
         query: req.query,
       });
+
+      // body overwrite করা যাবে
+      req.body = parsed.body;
+
+      // params overwrite করা যাবে
+      Object.assign(req.params, parsed.params);
+
+      // query overwrite করা যাবে না
+      Object.assign(req.query, parsed.query);
 
       next();
     } catch (error) {

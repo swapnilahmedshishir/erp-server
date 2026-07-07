@@ -9,6 +9,10 @@ const requiredEnvVariables = [
   'JWT_EXPIRES_IN',
   'BCRYPT_SALT_ROUNDS',
   'CLIENT_URL',
+
+  'CLOUDINARY_CLOUD_NAME',
+  'CLOUDINARY_API_KEY',
+  'CLOUDINARY_API_SECRET',
 ] as const;
 
 requiredEnvVariables.forEach((key) => {
@@ -31,8 +35,8 @@ export const env = {
   CLIENT_URL: process.env.CLIENT_URL!,
 
   CLOUDINARY: {
-    CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME || '',
-    API_KEY: process.env.CLOUDINARY_API_KEY || '',
-    API_SECRET: process.env.CLOUDINARY_API_SECRET || '',
+    CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
+    API_KEY: process.env.CLOUDINARY_API_KEY,
+    API_SECRET: process.env.CLOUDINARY_API_SECRET,
   },
 } as const;

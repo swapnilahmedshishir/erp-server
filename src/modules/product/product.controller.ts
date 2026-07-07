@@ -11,6 +11,11 @@ import { MESSAGE } from '../../constants/message';
 import { ProductService } from './product.service';
 
 const createProduct = catchAsync(async (req: Request, res: Response) => {
+  console.log('========== CONTROLLER ==========');
+  console.log('BODY:', req.body);
+  console.log('FILE:', req.file);
+  console.log('USER:', req.user);
+
   const result = await ProductService.createProduct(
     req.body,
     req.file as Express.Multer.File,

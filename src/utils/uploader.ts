@@ -1,44 +1,47 @@
-import { v2 as cloudinary } from 'cloudinary';
-import { Request } from 'express';
 import multer from 'multer';
-import streamifier from 'streamifier';
+import cloudinary from '../config/cloudinary';
 
 import AppError from './AppError';
+
 import { HTTP_STATUS } from '../constants/http';
 import { MESSAGE } from '../constants/message';
 
-/**
- * Multer Memory Storage
- */
+/* -------------------------------------------------------------------------- */
+/*                              Multer Storage                                */
+/* -------------------------------------------------------------------------- */
+
 const storage = multer.memoryStorage();
 
-/**
- * Image File Filter
- */
-const fileFilter: multer.Options['fileFilter'] = (_req, file, callback) => {
-  if (file.mimetype.startsWith('image/')) {
-    callback(null, true);
-  } else {
-    callback(
+/* -------------------------------------------------------------------------- */
+/*                               File Filter                                  */
+/* -------------------------------------------------------------------------- */
+
+const fileFilter: multer.Options['fileFilter'] = (_req, file, cb) => {
+  if (!file.mimetype.startsWith('image/')) {
+    return cb(
       new AppError(HTTP_STATUS.BAD_REQUEST, 'Only image files are allowed.'),
     );
   }
+
+  cb(null, true);
 };
 
-/**
- * Multer Upload Middleware
- */
+/* -------------------------------------------------------------------------- */
+/*                               Upload Middleware                            */
+/* -------------------------------------------------------------------------- */
+
 export const upload = multer({
   storage,
   fileFilter,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5 MB
+    fileSize: 5 * 1024 * 1024,
   },
 });
 
-/**
- * Upload Image to Cloudinary
- */
+/* -------------------------------------------------------------------------- */
+/*                           Upload To Cloudinary                             */
+/* -------------------------------------------------------------------------- */
+
 export const uploadToCloudinary = async (
   file: Express.Multer.File,
   folder = 'mini-erp',
@@ -47,35 +50,41 @@ export const uploadToCloudinary = async (
     throw new AppError(HTTP_STATUS.BAD_REQUEST, MESSAGE.PRODUCT.IMAGE_REQUIRED);
   }
 
-  return new Promise((resolve, reject) => {
-    const uploadStream = cloudinary.uploader.upload_stream(
+  try {
+    const result = await cloudinary.uploader.upload(
+      `data:${file.mimetype};base64,${file.buffer.toString('base64')}`,
       {
-        folder,
-        resource_type: 'image',
-      },
-      (error, result) => {
-        if (error || !result) {
-          return reject(
-            new AppError(
-              HTTP_STATUS.INTERNAL_SERVER_ERROR,
-              'Failed to upload image.',
-            ),
-          );
-        }
-
-        resolve(result.secure_url);
+        folder: 'mini-erp',
+        overwrite: true,
+        unique_filename: true,
       },
     );
 
-    streamifier.createReadStream(file.buffer).pipe(uploadStream);
-  });
+    console.log(result);
+
+    return result.secure_url;
+  } catch (error) {
+    console.error('========== CLOUDINARY ERROR ==========');
+    console.dir(error, { depth: null });
+
+    throw new AppError(
+      HTTP_STATUS.INTERNAL_SERVER_ERROR,
+      'Failed to upload image.',
+    );
+  }
 };
 
-/**
- * Delete Image From Cloudinary
- */
+/* -------------------------------------------------------------------------- */
+/*                        Delete From Cloudinary                              */
+/* -------------------------------------------------------------------------- */
+
 export const deleteFromCloudinary = async (publicId: string): Promise<void> => {
   if (!publicId) return;
 
-  await cloudinary.uploader.destroy(publicId);
+  try {
+    await cloudinary.uploader.destroy(publicId);
+  } catch (error) {
+    console.error('========== DELETE CLOUDINARY ERROR ==========');
+    console.dir(error, { depth: null });
+  }
 };
