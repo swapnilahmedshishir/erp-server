@@ -1,10 +1,8 @@
-// src/modules/sale/sale.validation.ts
-
-import { z } from "zod";
+import { z } from 'zod';
 
 const objectIdSchema = z
   .string()
-  .regex(/^[0-9a-fA-F]{24}$/, "Invalid MongoDB ObjectId.");
+  .regex(/^[0-9a-fA-F]{24}$/, 'Invalid MongoDB ObjectId.');
 
 const createSaleSchema = z.object({
   body: z.object({
@@ -14,14 +12,12 @@ const createSaleSchema = z.object({
           product: objectIdSchema,
 
           quantity: z.coerce
-            .number({
-              required_error: "Quantity is required.",
-            })
-            .int()
-            .min(1, "Quantity must be at least 1."),
+            .number()
+            .int('Quantity must be a whole number.')
+            .positive('Quantity must be greater than 0.'),
         }),
       )
-      .min(1, "At least one product is required."),
+      .min(1, 'At least one product is required.'),
   }),
 });
 
@@ -34,12 +30,9 @@ const getSaleSchema = z.object({
 const getSalesSchema = z.object({
   query: z.object({
     page: z.coerce.number().optional(),
-
     limit: z.coerce.number().optional(),
-
     sortBy: z.string().optional(),
-
-    sortOrder: z.enum(["asc", "desc"]).optional(),
+    sortOrder: z.enum(['asc', 'desc']).optional(),
   }),
 });
 

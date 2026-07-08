@@ -9,7 +9,7 @@ import { IJwtPayload, IJwtVerifyResult } from '../interfaces/jwt.interface';
 export const generateToken = (
   payload: IJwtPayload,
   secret: Secret = env.JWT_SECRET,
-  expiresIn: SignOptions['expiresIn'] = env.JWT_EXPIRES_IN,
+  expiresIn: SignOptions['expiresIn'] = env.JWT_EXPIRES_IN as SignOptions['expiresIn'],
 ): string => {
   return jwt.sign(payload, secret, {
     expiresIn,

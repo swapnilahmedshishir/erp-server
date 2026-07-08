@@ -13,49 +13,26 @@ const objectIdSchema = z
 const createProductSchema = z.object({
   body: z
     .object({
-      name: z
-        .string({
-          required_error: 'Product name is required.',
-        })
-        .trim()
-        .min(2)
-        .max(150),
+      name: z.string().trim().min(1, 'Product name is required.').max(150),
 
       sku: z
-        .string({
-          required_error: 'SKU is required.',
-        })
+        .string()
         .trim()
-        .min(2)
+        .min(1, 'SKU is required.')
         .max(50)
         .transform((value) => value.toUpperCase()),
 
-      category: z
-        .string({
-          required_error: 'Category is required.',
-        })
-        .trim()
-        .min(2)
-        .max(100),
+      category: z.string().trim().min(1, 'Category is required.').max(100),
 
       purchasePrice: z.coerce
-        .number({
-          required_error: 'Purchase price is required.',
-        })
-        .min(0),
+        .number()
+        .nonnegative('Purchase price cannot be negative.'),
 
       sellingPrice: z.coerce
-        .number({
-          required_error: 'Selling price is required.',
-        })
-        .min(0),
+        .number()
+        .nonnegative('Selling price cannot be negative.'),
 
-      stock: z.coerce
-        .number({
-          required_error: 'Stock quantity is required.',
-        })
-        .int()
-        .min(0),
+      stock: z.coerce.number().int().nonnegative('Stock cannot be negative.'),
     })
     .superRefine((data, ctx) => {
       if (data.sellingPrice < data.purchasePrice) {

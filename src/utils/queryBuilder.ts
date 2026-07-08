@@ -1,4 +1,4 @@
-import { FilterQuery, Query } from 'mongoose';
+import { Query } from 'mongoose';
 
 export default class QueryBuilder<T> {
   constructor(
@@ -17,7 +17,7 @@ export default class QueryBuilder<T> {
             $options: 'i',
           },
         })),
-      } as FilterQuery<T>);
+      } as Record<string, unknown>);
     }
 
     return this;
@@ -37,7 +37,9 @@ export default class QueryBuilder<T> {
 
     excludedFields.forEach((field) => delete queryObject[field]);
 
-    this.modelQuery = this.modelQuery.find(queryObject as FilterQuery<T>);
+    this.modelQuery = this.modelQuery = this.modelQuery.find(
+      queryObject as Record<string, unknown>,
+    );
 
     return this;
   }

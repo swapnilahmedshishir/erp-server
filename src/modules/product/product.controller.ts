@@ -1,4 +1,4 @@
-// src/modules/product/product.controller.ts
+import { Types } from 'mongoose';
 
 import { Request, Response } from 'express';
 
@@ -11,15 +11,10 @@ import { MESSAGE } from '../../constants/message';
 import { ProductService } from './product.service';
 
 const createProduct = catchAsync(async (req: Request, res: Response) => {
-  console.log('========== CONTROLLER ==========');
-  console.log('BODY:', req.body);
-  console.log('FILE:', req.file);
-  console.log('USER:', req.user);
-
   const result = await ProductService.createProduct(
     req.body,
     req.file as Express.Multer.File,
-    req.user!.userId,
+    new Types.ObjectId(req.user!.userId),
   );
 
   sendResponse(res, {
@@ -45,7 +40,7 @@ const getAllProducts = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getProductById = catchAsync(async (req: Request, res: Response) => {
-  const result = await ProductService.getProductById(req.params.id);
+  const result = await ProductService.getProductById(req.params.id as string);
 
   sendResponse(res, {
     success: true,
@@ -57,10 +52,10 @@ const getProductById = catchAsync(async (req: Request, res: Response) => {
 
 const updateProduct = catchAsync(async (req: Request, res: Response) => {
   const result = await ProductService.updateProduct(
-    req.params.id,
+    req.params.id as string,
     req.body,
     req.file,
-    req.user!.userId,
+    new Types.ObjectId(req.user!.userId),
   );
 
   sendResponse(res, {
@@ -72,7 +67,7 @@ const updateProduct = catchAsync(async (req: Request, res: Response) => {
 });
 
 const deleteProduct = catchAsync(async (req: Request, res: Response) => {
-  await ProductService.deleteProduct(req.params.id);
+  await ProductService.deleteProduct(req.params.id as string);
 
   sendResponse(res, {
     success: true,

@@ -84,11 +84,10 @@ const globalErrorHandler: ErrorRequestHandler = (error, _req, res, _next) => {
     success: false,
     statusCode,
     message,
-    ...(errorDetails && { errorDetails }),
-    ...(env.NODE_ENV === 'development' &&
-      error instanceof Error && {
-        stack: error.stack,
-      }),
+    ...(errorDetails ? { errorDetails } : {}),
+    ...(env.NODE_ENV === 'development' && error instanceof Error
+      ? { stack: error.stack }
+      : {}),
   });
 };
 
