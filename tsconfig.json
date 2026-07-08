@@ -11,6 +11,8 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
 
+    "types": ["node", "express"],
+
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
 

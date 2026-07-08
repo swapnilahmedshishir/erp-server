@@ -1,5 +1,4 @@
 import { HydratedDocument, Model } from 'mongoose';
-
 import { UserRole } from '../../constants/role';
 
 /**
